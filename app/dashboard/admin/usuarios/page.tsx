@@ -27,6 +27,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FallbackImage } from "@/components/ui/fallback-image"
 // Corregir la importación de generateQRCode
 import { generateQRCode } from "@/lib/qr-utils"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 
 interface Usuario {
   id: string
@@ -111,16 +113,20 @@ export default function UsuariosPage() {
 
     setLoading(true)
     try {
+      // Crear usuario en Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, nuevoUsuario.email, nuevoUsuario.password)
+      const uid = userCredential.user.uid
+
       // Generar QR basado en el DNI
       const qrData = `COLEGIO:${nuevoUsuario.dni}:${Date.now()}`
       const qrCodeUrl = await generateQRCode(qrData)
 
       // Crear usuario en Firestore
       await addDoc(collection(db, "users"), {
+        uid,
         nombre: nuevoUsuario.nombre,
         apellidos: nuevoUsuario.apellidos,
         email: nuevoUsuario.email,
-        password: nuevoUsuario.password, // En una implementación real, esto se manejaría de forma segura
         role: nuevoUsuario.role,
         dni: nuevoUsuario.dni,
         qrCode: qrCodeUrl,
@@ -143,11 +149,19 @@ export default function UsuariosPage() {
 
       cargarUsuarios()
       setActiveTab("lista")
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error al crear usuario:", error)
+      let errorMessage = "No se pudo crear el usuario. Intenta nuevamente."
+      
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "El correo electrónico ya está en uso."
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "La contraseña es demasiado débil. Debe tener al menos 6 caracteres."
+      }
+
       toast({
         title: "Error",
-        description: "No se pudo crear el usuario. Intenta nuevamente.",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {

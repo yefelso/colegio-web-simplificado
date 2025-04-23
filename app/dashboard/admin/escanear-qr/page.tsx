@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import jsQR from "jsqr"
 
 export default function EscanearQRPage() {
   const { user } = useAuth()
@@ -55,6 +56,8 @@ export default function EscanearQRPage() {
       const constraints = {
         video: {
           facingMode: "environment",
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
         },
       }
 
@@ -62,7 +65,7 @@ export default function EscanearQRPage() {
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream
-        videoRef.current.play()
+        await videoRef.current.play()
 
         // Comenzar a escanear
         requestAnimationFrame(escanearFrame)
@@ -78,11 +81,9 @@ export default function EscanearQRPage() {
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream
       const tracks = stream.getTracks()
-
       tracks.forEach((track) => track.stop())
       videoRef.current.srcObject = null
     }
-
     setEscaneando(false)
   }
 
@@ -101,19 +102,16 @@ export default function EscanearQRPage() {
         context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
         const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: "dontInvert",
+        })
 
-        // Aquí normalmente usaríamos una biblioteca como jsQR para decodificar el código QR
-        // Pero para simplificar, simularemos la detección de un QR con un ID de alumno
-
-        // Simulación: detectar un QR después de 3 segundos
-        setTimeout(() => {
-          if (escaneando) {
-            // Simulamos que se detectó un QR con el ID de un alumno
-            const qrDetectado = "alumno123" // En una implementación real, esto vendría del escaneo
-            setAlumnoId(qrDetectado)
-            detenerEscaneo()
-          }
-        }, 3000)
+        if (code) {
+          // Se detectó un código QR
+          const qrDetectado = code.data
+          setAlumnoId(qrDetectado)
+          detenerEscaneo()
+        }
       }
 
       if (escaneando) {
@@ -121,6 +119,8 @@ export default function EscanearQRPage() {
       }
     } catch (error) {
       console.error("Error al escanear frame:", error)
+      setError("Error al procesar el escaneo. Intenta nuevamente.")
+      detenerEscaneo()
     }
   }
 
@@ -277,6 +277,25 @@ export default function EscanearQRPage() {
 
     buscarAlumno()
   }
+
+  // Agregar un timeout para mostrar un mensaje si no se detecta ningún QR
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout
+
+    if (escaneando) {
+      timeoutId = setTimeout(() => {
+        if (escaneando) {
+          setError("No se detectó ningún código QR. Asegúrate de que el código esté bien iluminado y visible.")
+        }
+      }, 10000) // 10 segundos
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [escaneando])
 
   if (user?.role !== "admin" && user?.role !== "profesor") {
     return null
