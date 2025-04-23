@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/components/ui/use-toast"
-import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "firebase/firestore"
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, where } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
 import { User, UserPlus, Trash2, QrCode, ListFilter } from "lucide-react"
@@ -27,7 +27,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FallbackImage } from "@/components/ui/fallback-image"
 // Corregir la importación de generateQRCode
 import { generateQRCode } from "@/lib/qr-utils"
-import { createUserWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, deleteUser } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 
 interface Usuario {
@@ -94,6 +94,22 @@ export default function UsuariosPage() {
     setNuevoUsuario((prev) => ({ ...prev, [name]: value }))
   }
 
+  const limpiarUsuarioExistente = async (email: string) => {
+    try {
+      // Buscar el usuario en Firestore
+      const usuariosQuery = query(collection(db, "users"), where("email", "==", email))
+      const usuariosSnapshot = await getDocs(usuariosQuery)
+
+      if (!usuariosSnapshot.empty) {
+        // Eliminar el usuario de Firestore
+        const usuarioDoc = usuariosSnapshot.docs[0]
+        await deleteDoc(doc(db, "users", usuarioDoc.id))
+      }
+    } catch (error) {
+      console.error("Error al limpiar usuario existente:", error)
+    }
+  }
+
   const crearUsuario = async (e: React.FormEvent) => {
     e.preventDefault()
     if (
@@ -113,12 +129,15 @@ export default function UsuariosPage() {
 
     setLoading(true)
     try {
+      // Intentar limpiar el usuario existente si existe
+      await limpiarUsuarioExistente(nuevoUsuario.email)
+
       // Crear usuario en Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, nuevoUsuario.email, nuevoUsuario.password)
       const uid = userCredential.user.uid
 
       // Generar QR basado en el DNI
-      const qrData = `COLEGIO:${nuevoUsuario.dni}:${Date.now()}`
+      const qrData = `COLEGIO:${nuevoUsuario.role.toUpperCase()}:${uid}:${nuevoUsuario.dni}`
       const qrCodeUrl = await generateQRCode(qrData)
 
       // Crear usuario en Firestore
@@ -154,7 +173,7 @@ export default function UsuariosPage() {
       let errorMessage = "No se pudo crear el usuario. Intenta nuevamente."
       
       if (error.code === "auth/email-already-in-use") {
-        errorMessage = "El correo electrónico ya está en uso."
+        errorMessage = "El correo electrónico ya está en uso. Intenta con otro correo."
       } else if (error.code === "auth/weak-password") {
         errorMessage = "La contraseña es demasiado débil. Debe tener al menos 6 caracteres."
       }

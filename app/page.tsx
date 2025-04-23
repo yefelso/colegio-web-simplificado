@@ -1,179 +1,97 @@
-import Link from "next/link"
+"use client"
+
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { useRouter } from "next/navigation"
+import { GraduationCap, BookOpen, Users, Calendar } from "lucide-react"
 
-export default function Home() {
+export default function HomePage() {
+  const router = useRouter()
+
   return (
-    <div className="flex flex-col gap-8">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-20">
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-            <div className="space-y-4">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Colegio Maria de los Angeles</h1>
-              <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Formando líderes del mañana con educación de calidad, valores y excelencia académica.
-              </p>
-              <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Link href="/informacion">
-                  <Button size="lg">Conoce más</Button>
-                </Link>
-                <Link href="/login">
-                  <Button variant="outline" size="lg">
-                    Iniciar sesión
-                  </Button>
-                </Link>
-              </div>
+      <section className="relative bg-gradient-to-br from-blue-500 to-blue-400 text-white">
+        <div className="container mx-auto px-4 py-32">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-5xl font-bold mb-6">Bienvenido a Nuestro Colegio</h1>
+            <p className="text-xl mb-8">Un lugar donde la excelencia académica se encuentra con el desarrollo personal</p>
+            <Button
+              size="lg"
+              className="bg-white text-blue-600 hover:bg-blue-50"
+              onClick={() => router.push("/login")}
+            >
+              Iniciar Sesión
+            </Button>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg
+            className="w-full h-16 text-white"
+            viewBox="0 0 1440 100"
+            fill="currentColor"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,0 L1440,100 L1440,0 Z" />
+          </svg>
+        </div>
+      </section>
+
+      {/* Information Section */}
+      <section className="bg-white py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Nuestros Servicios</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="text-center p-6 rounded-lg bg-blue-50">
+              <GraduationCap className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+              <h3 className="text-xl font-semibold mb-2">Educación de Calidad</h3>
+              <p className="text-gray-600">Programas académicos diseñados para el éxito</p>
             </div>
-            <img
-              src="/placeholder.svg?height=400&width=600"
-              alt="Colegio San Martín"
-              className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
-            />
+            <div className="text-center p-6 rounded-lg bg-blue-50">
+              <BookOpen className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+              <h3 className="text-xl font-semibold mb-2">Biblioteca Digital</h3>
+              <p className="text-gray-600">Acceso a recursos educativos en línea</p>
+            </div>
+            <div className="text-center p-6 rounded-lg bg-blue-50">
+              <Users className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+              <h3 className="text-xl font-semibold mb-2">Comunidad Activa</h3>
+              <p className="text-gray-600">Participación de padres y estudiantes</p>
+            </div>
+            <div className="text-center p-6 rounded-lg bg-blue-50">
+              <Calendar className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+              <h3 className="text-xl font-semibold mb-2">Eventos Culturales</h3>
+              <p className="text-gray-600">Actividades extracurriculares variadas</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-12 md:py-16 lg:py-20">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Nuestros Programas</h2>
-              <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Ofrecemos una educación integral que prepara a nuestros estudiantes para los desafíos del futuro.
-              </p>
-            </div>
-          </div>
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-3">
-            <Card>
-              <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
-                <div className="rounded-full bg-blue-100 p-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-6 w-6 text-blue-600"
-                  >
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold">Primaria</h3>
-                <p className="text-gray-500">Formación básica con enfoque en habilidades fundamentales y valores.</p>
-                <Link href="/informacion">
-                  <Button variant="outline" size="sm">
-                    Más información
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
-                <div className="rounded-full bg-blue-100 p-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-6 w-6 text-blue-600"
-                  >
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                    <rect width="4" height="12" x="2" y="9" />
-                    <circle cx="4" cy="4" r="2" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold">Secundaria</h3>
-                <p className="text-gray-500">Preparación académica avanzada con orientación vocacional.</p>
-                <Link href="/informacion">
-                  <Button variant="outline" size="sm">
-                    Más información
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
-                <div className="rounded-full bg-blue-100 p-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-6 w-6 text-blue-600"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="m4.93 4.93 4.24 4.24" />
-                    <path d="m14.83 9.17 4.24-4.24" />
-                    <path d="m14.83 14.83 4.24 4.24" />
-                    <path d="m9.17 14.83-4.24 4.24" />
-                    <circle cx="12" cy="12" r="4" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold">Actividades</h3>
-                <p className="text-gray-500">Programas extracurriculares para el desarrollo integral.</p>
-                <Link href="/informacion">
-                  <Button variant="outline" size="sm">
-                    Más información
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+      {/* About Us Section */}
+      <section className="relative bg-gradient-to-br from-yellow-400 to-orange-400 text-white">
+        <div className="container mx-auto px-4 py-20">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-6">Sobre Nosotros</h2>
+            <p className="text-lg mb-8">
+              Somos una institución educativa comprometida con la excelencia académica y el desarrollo integral de nuestros
+              estudiantes. Nuestro objetivo es formar líderes del mañana con valores sólidos y habilidades para el éxito.
+            </p>
+            <Button
+              size="lg"
+              className="bg-white text-orange-600 hover:bg-orange-50"
+              onClick={() => router.push("/contacto")}
+            >
+              Contáctanos
+            </Button>
           </div>
         </div>
-      </section>
-
-      {/* News Section */}
-      <section className="bg-gray-50 py-12 md:py-16 lg:py-20">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Últimas Noticias</h2>
-              <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Mantente informado sobre las actividades y logros de nuestra comunidad educativa.
-              </p>
-            </div>
-          </div>
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardContent className="p-0">
-                  <img
-                    src={`/placeholder.svg?height=200&width=400&text=Noticia ${i}`}
-                    alt={`Noticia ${i}`}
-                    className="aspect-video w-full object-cover"
-                  />
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold">Noticia destacada {i}</h3>
-                    <p className="text-sm text-gray-500 mt-2">12 de Abril, 2024</p>
-                    <p className="mt-4 text-gray-500">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-                      labore.
-                    </p>
-                    <Button variant="link" className="mt-4 p-0">
-                      Leer más
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg
+            className="w-full h-16 text-white"
+            viewBox="0 0 1440 100"
+            fill="currentColor"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,100 L1440,0 L1440,100 Z" />
+          </svg>
         </div>
       </section>
     </div>
