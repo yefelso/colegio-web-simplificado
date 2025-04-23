@@ -348,4 +348,37 @@ export default function DashboardPage() {
           <CardTitle>Mis Cursos y Calificaciones</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">\
+          <div className="space-y-4">
+            {cursosAlumno.length === 0 ? (
+              <div className="text-center py-8">
+                <GraduationCap className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                <p className="text-gray-500">No tienes cursos asignados actualmente.</p>
+                <p className="text-sm text-gray-400 mt-2">Contacta con administración para asignaciones de cursos.</p>
+              </div>
+            ) : (
+              cursosAlumno.map((curso, index) => (
+                <div key={index} className="flex justify-between items-center p-3 border rounded-md">
+                  <div>
+                    <h4 className="font-medium">{curso.nombre}</h4>
+                    <p className="text-sm text-gray-500">Profesor: {curso.profesor}</p>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium">{curso.calificacion}%</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  )
+
+  return (
+    <div className="space-y-6">
+      {user?.role === "admin" && <AdminDashboard />}
+      {user?.role === "profesor" && <TeacherDashboard />}
+      {user?.role === "alumno" && <StudentDashboard />}
+    </div>
+  )
+}
