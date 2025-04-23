@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import jsQR from "jsqr"
+import { parseQRCode } from "@/lib/qr-utils"
 
 export default function EscanearQRPage() {
   const { user } = useAuth()
@@ -107,10 +108,16 @@ export default function EscanearQRPage() {
         })
 
         if (code) {
-          // Se detectó un código QR
-          const qrDetectado = code.data
-          setAlumnoId(qrDetectado)
-          detenerEscaneo()
+          // Verificar que el QR tenga el formato correcto
+          const qrData = parseQRCode(code.data)
+          
+          if (qrData.isValid) {
+            // Si es un QR válido, usar el ID del usuario
+            setAlumnoId(qrData.id || "")
+            detenerEscaneo()
+          } else {
+            setError("El código QR no tiene el formato correcto. Asegúrate de escanear un código QR válido del sistema.")
+          }
         }
       }
 

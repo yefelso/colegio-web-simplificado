@@ -207,7 +207,7 @@ export default function UsuariosPage() {
     setGenerandoQR(true)
 
     try {
-      // Generar QR basado en el DNI y rol
+      // Generar QR con el formato correcto: COLEGIO:TIPO:ID:DNI
       const tipoUsuario = usuario.role.toUpperCase()
       const qrData = `COLEGIO:${tipoUsuario}:${usuario.id}:${usuario.dni}`
       const qrCodeUrl = await generateQRCode(qrData)
