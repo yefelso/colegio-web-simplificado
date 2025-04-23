@@ -58,7 +58,8 @@ export default function EscanearQRPage() {
         video: {
           facingMode: "environment",
           width: { ideal: 1280 },
-          height: { ideal: 720 }
+          height: { ideal: 720 },
+          focusMode: "continuous",
         },
       }
 
@@ -105,6 +106,7 @@ export default function EscanearQRPage() {
         const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
         const code = jsQR(imageData.data, imageData.width, imageData.height, {
           inversionAttempts: "dontInvert",
+          threshold: 0.1,
         })
 
         if (code) {
@@ -294,7 +296,7 @@ export default function EscanearQRPage() {
         if (escaneando) {
           setError("No se detectó ningún código QR. Asegúrate de que el código esté bien iluminado y visible.")
         }
-      }, 10000) // 10 segundos
+      }, 5000) // Reducir el tiempo a 5 segundos
     }
 
     return () => {

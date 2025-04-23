@@ -1,133 +1,88 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
+import { GraduationCap, BookOpen, Users, Calendar, School, Award, Globe } from "lucide-react"
 
 export default function InformacionPage() {
-  return (
-    <div className="container px-4 py-12 md:px-6 md:py-16 lg:py-20">
-      <div className="flex flex-col items-center justify-center space-y-4 text-center">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Información Académica</h1>
-          <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-            Conoce nuestros programas educativos, metodología y servicios.
-          </p>
-        </div>
-      </div>
+  const router = useRouter()
 
-      <div className="mx-auto max-w-4xl mt-12">
-        <Tabs defaultValue="programas" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="programas">Programas</TabsTrigger>
-            <TabsTrigger value="metodologia">Metodología</TabsTrigger>
-            <TabsTrigger value="servicios">Servicios</TabsTrigger>
-          </TabsList>
-          <TabsContent value="programas" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Programas Educativos</CardTitle>
-                <CardDescription>
-                  Nuestros programas están diseñados para desarrollar el potencial de cada estudiante.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-bold">Educación Primaria</h3>
-                  <p className="mt-2 text-gray-500">
-                    Nuestro programa de primaria se enfoca en desarrollar habilidades fundamentales en lectura,
-                    escritura, matemáticas y ciencias, mientras fomentamos la curiosidad y el amor por el aprendizaje.
-                  </p>
-                  <ul className="mt-4 list-disc pl-6 text-gray-500">
-                    <li>Grados: 1° a 6° de primaria</li>
-                    <li>Horario: 8:00 AM - 2:00 PM</li>
-                    <li>Idiomas: Español e Inglés</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold">Educación Secundaria</h3>
-                  <p className="mt-2 text-gray-500">
-                    El programa de secundaria prepara a los estudiantes para la educación superior con un currículo
-                    riguroso y enfoque en el pensamiento crítico y habilidades de investigación.
-                  </p>
-                  <ul className="mt-4 list-disc pl-6 text-gray-500">
-                    <li>Grados: 1° a 5° de secundaria</li>
-                    <li>Horario: 8:00 AM - 3:00 PM</li>
-                    <li>Programas especiales: Bachillerato Internacional</li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="metodologia" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Nuestra Metodología</CardTitle>
-                <CardDescription>
-                  Utilizamos métodos pedagógicos innovadores centrados en el estudiante.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-bold">Aprendizaje Activo</h3>
-                  <p className="mt-2 text-gray-500">
-                    Promovemos la participación activa de los estudiantes en su proceso de aprendizaje, fomentando la
-                    experimentación, el trabajo en equipo y la resolución de problemas.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold">Educación Personalizada</h3>
-                  <p className="mt-2 text-gray-500">
-                    Reconocemos que cada estudiante tiene diferentes fortalezas, intereses y estilos de aprendizaje.
-                    Nuestros docentes adaptan su enseñanza para satisfacer las necesidades individuales.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold">Tecnología Educativa</h3>
-                  <p className="mt-2 text-gray-500">
-                    Integramos herramientas tecnológicas en el aula para enriquecer la experiencia de aprendizaje y
-                    preparar a los estudiantes para un mundo digital.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="servicios" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Servicios Adicionales</CardTitle>
-                <CardDescription>
-                  Ofrecemos diversos servicios para apoyar el desarrollo integral de nuestros estudiantes.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-bold">Orientación Psicopedagógica</h3>
-                  <p className="mt-2 text-gray-500">
-                    Contamos con un equipo de psicólogos y orientadores que brindan apoyo emocional y académico a los
-                    estudiantes y sus familias.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold">Actividades Extracurriculares</h3>
-                  <p className="mt-2 text-gray-500">
-                    Ofrecemos una amplia variedad de actividades deportivas, artísticas y culturales para complementar
-                    la formación académica.
-                  </p>
-                  <ul className="mt-4 list-disc pl-6 text-gray-500">
-                    <li>Deportes: fútbol, baloncesto, voleibol, natación</li>
-                    <li>Arte: música, teatro, danza, artes visuales</li>
-                    <li>Clubes: robótica, debate, ciencias, matemáticas</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold">Comedor Escolar</h3>
-                  <p className="mt-2 text-gray-500">
-                    Servicio de alimentación con menús balanceados y nutritivos, supervisados por nutricionistas.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-blue-500 to-blue-400 text-white">
+        <div className="container mx-auto px-4 py-32">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-5xl font-bold mb-6">Información del Colegio</h1>
+            <p className="text-xl mb-8">Conoce más sobre nuestra institución y nuestros programas educativos</p>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg
+            className="w-full h-16 text-white"
+            viewBox="0 0 1440 100"
+            fill="currentColor"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,0 L1440,100 L1440,0 Z" />
+          </svg>
+        </div>
+      </section>
+
+      {/* Programs Section */}
+      <section className="bg-white py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Nuestros Programas</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="text-center p-6 rounded-lg bg-blue-50">
+              <School className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+              <h3 className="text-xl font-semibold mb-2">Educación Primaria</h3>
+              <p className="text-gray-600">Formación básica con enfoque en habilidades fundamentales y valores</p>
+            </div>
+            <div className="text-center p-6 rounded-lg bg-blue-50">
+              <GraduationCap className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+              <h3 className="text-xl font-semibold mb-2">Educación Secundaria</h3>
+              <p className="text-gray-600">Preparación académica avanzada con orientación vocacional</p>
+            </div>
+            <div className="text-center p-6 rounded-lg bg-blue-50">
+              <Award className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+              <h3 className="text-xl font-semibold mb-2">Programas Especiales</h3>
+              <p className="text-gray-600">Actividades extracurriculares y programas de desarrollo personal</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Us Section */}
+      <section className="relative bg-gradient-to-br from-yellow-400 to-orange-400 text-white">
+        <div className="container mx-auto px-4 py-20">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-6">Nuestra Misión</h2>
+            <p className="text-lg mb-8">
+              Formar estudiantes con excelencia académica, valores sólidos y habilidades para el éxito en un mundo globalizado.
+              Nuestro compromiso es proporcionar una educación integral que prepare a nuestros estudiantes para los desafíos
+              del futuro.
+            </p>
+            <Button
+              size="lg"
+              className="bg-white text-orange-600 hover:bg-orange-50"
+              onClick={() => router.push("/contacto")}
+            >
+              Contáctanos
+            </Button>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg
+            className="w-full h-16 text-white"
+            viewBox="0 0 1440 100"
+            fill="currentColor"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,100 L1440,0 L1440,100 Z" />
+          </svg>
+        </div>
+      </section>
     </div>
   )
 }

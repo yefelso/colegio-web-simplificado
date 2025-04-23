@@ -29,6 +29,7 @@ import { FallbackImage } from "@/components/ui/fallback-image"
 import { generateQRCode } from "@/lib/qr-utils"
 import { createUserWithEmailAndPassword, deleteUser } from "firebase/auth"
 import { auth } from "@/lib/firebase"
+import { signInWithEmailAndPassword } from "firebase/auth"
 
 interface Usuario {
   id: string
@@ -104,6 +105,15 @@ export default function UsuariosPage() {
         // Eliminar el usuario de Firestore
         const usuarioDoc = usuariosSnapshot.docs[0]
         await deleteDoc(doc(db, "users", usuarioDoc.id))
+      }
+
+      // Intentar eliminar el usuario de Firebase Authentication
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, "temporaryPassword")
+        await deleteUser(userCredential.user)
+      } catch (error) {
+        // Ignorar errores de autenticación, ya que el usuario podría no existir
+        console.log("Usuario no encontrado en Firebase Auth")
       }
     } catch (error) {
       console.error("Error al limpiar usuario existente:", error)
