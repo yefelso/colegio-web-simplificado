@@ -14,7 +14,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
+
+// Inicializar segunda instancia para crear usuarios
+const secondaryApp = initializeApp(firebaseConfig, 'secondary')
+
 const auth = getAuth(app)
+const secondaryAuth = getAuth(secondaryApp)
 const db = getFirestore(app)
 
-export { app, auth, db }
+export { app, auth, db, secondaryAuth }

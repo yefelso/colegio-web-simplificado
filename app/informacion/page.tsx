@@ -18,13 +18,12 @@ export default function InformacionPage() {
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            className="w-full h-16 text-white"
+        <svg
+            className="w-full h-16 fill-white"
             viewBox="0 0 1440 100"
-            fill="currentColor"
             preserveAspectRatio="none"
           >
-            <path d="M0,0 L1440,100 L1440,0 Z" />
+            <path d="M0,0 L1440,0 L1440,100 L0,100 L0,0 L1440,100 L1440,0 Z" />
           </svg>
         </div>
       </section>

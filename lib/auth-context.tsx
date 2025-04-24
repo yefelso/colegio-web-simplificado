@@ -3,7 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { signInWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth"
-import { doc, getDoc } from "firebase/firestore"
+import { doc, getDoc, setDoc } from "firebase/firestore"
 import { auth, db } from "./firebase"
 
 interface User {
@@ -21,6 +21,7 @@ interface AuthContextType {
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
+  checkUserRole: (requiredRole: string) => boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -71,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (userDoc.exists()) {
         const userData = userDoc.data() as User
 
-        // Verificar que el rol sea válido (incluir "auxiliar" como rol válido)
+        // Verificar que el rol sea válido
         if (
           userData.role === "admin" ||
           userData.role === "profesor" ||
@@ -109,7 +110,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  return <AuthContext.Provider value={{ user, loading, signIn, signOut }}>{children}</AuthContext.Provider>
+  // Agregar una función para verificar el rol del usuario
+  const checkUserRole = (requiredRole: string) => {
+    if (!user) return false
+    return user.role === requiredRole
+  }
+
+  return <AuthContext.Provider value={{ user, loading, signIn, signOut, checkUserRole }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {

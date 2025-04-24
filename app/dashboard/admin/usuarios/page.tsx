@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,10 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/components/ui/use-toast"
-import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, where } from "firebase/firestore"
+import { collection, getDocs, doc, deleteDoc, updateDoc, query, where, setDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
-import { User, UserPlus, Trash2, QrCode, ListFilter } from "lucide-react"
+import { User, UserPlus, Trash2, QrCode, ListFilter, Eye, EyeOff } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -23,19 +22,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-// Importar el nuevo componente
 import { FallbackImage } from "@/components/ui/fallback-image"
-// Corregir la importación de generateQRCode
 import { generateQRCode } from "@/lib/qr-utils"
-import { createUserWithEmailAndPassword, deleteUser } from "firebase/auth"
-import { auth } from "@/lib/firebase"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut } from "firebase/auth"
+import { auth, secondaryAuth } from "@/lib/firebase"
 
 interface Usuario {
   id: string
   nombre: string
   apellidos: string
   email: string
+  password: string
   role: string
   dni: string
   qrCode?: string
@@ -49,6 +46,7 @@ export default function UsuariosPage() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [filtro, setFiltro] = useState("")
   const [rolFiltro, setRolFiltro] = useState("todos")
+  const [showPassword, setShowPassword] = useState(false)
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: "",
     apellidos: "",
@@ -95,31 +93,6 @@ export default function UsuariosPage() {
     setNuevoUsuario((prev) => ({ ...prev, [name]: value }))
   }
 
-  const limpiarUsuarioExistente = async (email: string) => {
-    try {
-      // Buscar el usuario en Firestore
-      const usuariosQuery = query(collection(db, "users"), where("email", "==", email))
-      const usuariosSnapshot = await getDocs(usuariosQuery)
-
-      if (!usuariosSnapshot.empty) {
-        // Eliminar el usuario de Firestore
-        const usuarioDoc = usuariosSnapshot.docs[0]
-        await deleteDoc(doc(db, "users", usuarioDoc.id))
-      }
-
-      // Intentar eliminar el usuario de Firebase Authentication
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, "temporaryPassword")
-        await deleteUser(userCredential.user)
-      } catch (error) {
-        // Ignorar errores de autenticación, ya que el usuario podría no existir
-        console.log("Usuario no encontrado en Firebase Auth")
-      }
-    } catch (error) {
-      console.error("Error al limpiar usuario existente:", error)
-    }
-  }
-
   const crearUsuario = async (e: React.FormEvent) => {
     e.preventDefault()
     if (
@@ -139,19 +112,23 @@ export default function UsuariosPage() {
 
     setLoading(true)
     try {
-      // Intentar limpiar el usuario existente si existe
-      await limpiarUsuarioExistente(nuevoUsuario.email)
-
-      // Crear usuario en Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(auth, nuevoUsuario.email, nuevoUsuario.password)
+      // Crear usuario en Firebase Authentication usando la instancia secundaria
+      const userCredential = await createUserWithEmailAndPassword(
+        secondaryAuth,
+        nuevoUsuario.email,
+        nuevoUsuario.password
+      )
       const uid = userCredential.user.uid
+
+      // Desconectar inmediatamente la instancia secundaria
+      await secondaryAuth.signOut()
 
       // Generar QR basado en el DNI
       const qrData = `COLEGIO:${nuevoUsuario.role.toUpperCase()}:${uid}:${nuevoUsuario.dni}`
       const qrCodeUrl = await generateQRCode(qrData)
 
-      // Crear usuario en Firestore
-      await addDoc(collection(db, "users"), {
+      // Crear usuario en Firestore con todos los datos necesarios
+      await setDoc(doc(db, "users", uid), {
         uid,
         nombre: nuevoUsuario.nombre,
         apellidos: nuevoUsuario.apellidos,
@@ -167,6 +144,7 @@ export default function UsuariosPage() {
         description: "El usuario ha sido creado correctamente.",
       })
 
+      // Limpiar el formulario completamente
       setNuevoUsuario({
         nombre: "",
         apellidos: "",
@@ -175,8 +153,10 @@ export default function UsuariosPage() {
         role: "alumno",
         dni: "",
       })
+      setShowPassword(false)
 
-      cargarUsuarios()
+      // Recargar la lista y cambiar a la pestaña de lista
+      await cargarUsuarios()
       setActiveTab("lista")
     } catch (error: any) {
       console.error("Error al crear usuario:", error)
@@ -198,11 +178,21 @@ export default function UsuariosPage() {
     }
   }
 
-  const eliminarUsuario = async (id: string) => {
+  const eliminarUsuario = async (id: string, email: string) => {
     if (confirm("¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.")) {
       setLoading(true)
       try {
+        // Primero eliminar de Firestore
         await deleteDoc(doc(db, "users", id))
+
+        // Luego intentar eliminar de Firebase Authentication
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, "temporaryPassword")
+          await deleteUser(userCredential.user)
+        } catch (error) {
+          console.log("Usuario no encontrado en Firebase Auth")
+        }
+
         toast({
           title: "Usuario eliminado",
           description: "El usuario ha sido eliminado correctamente.",
@@ -221,7 +211,6 @@ export default function UsuariosPage() {
     }
   }
 
-  // Modificar la función generarQRUsuario para usar el nuevo formato
   const generarQRUsuario = async (usuario: Usuario) => {
     if (!usuario.dni) {
       toast({
@@ -236,19 +225,15 @@ export default function UsuariosPage() {
     setGenerandoQR(true)
 
     try {
-      // Generar QR con el formato correcto: COLEGIO:TIPO:ID:DNI
       const tipoUsuario = usuario.role.toUpperCase()
       const qrData = `COLEGIO:${tipoUsuario}:${usuario.id}:${usuario.dni}`
       const qrCodeUrl = await generateQRCode(qrData)
 
-      // Actualizar usuario en Firestore
       await updateDoc(doc(db, "users", usuario.id), {
         qrCode: qrCodeUrl,
       })
 
-      // Actualizar estado local
       setUsuarios(usuarios.map((u) => (u.id === usuario.id ? { ...u, qrCode: qrCodeUrl } : u)))
-
       setUsuarioSeleccionado({ ...usuario, qrCode: qrCodeUrl })
 
       toast({
@@ -345,14 +330,24 @@ export default function UsuariosPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="password">Contraseña</Label>
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      value={nuevoUsuario.password}
-                      onChange={handleChangeNuevoUsuario}
-                      required
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        value={nuevoUsuario.password}
+                        onChange={handleChangeNuevoUsuario}
+                        required
+                        autoComplete="new-password"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Rol</Label>
@@ -406,6 +401,7 @@ export default function UsuariosPage() {
                     <option value="todos">Todos los roles</option>
                     <option value="alumno">Alumnos</option>
                     <option value="profesor">Profesores</option>
+                    <option value="auxiliar">Auxiliares</option>
                     <option value="admin">Administradores</option>
                   </select>
                 </div>
@@ -557,7 +553,7 @@ export default function UsuariosPage() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => eliminarUsuario(usuario.id)}
+                                onClick={() => eliminarUsuario(usuario.id, usuario.email)}
                                 className="text-red-600 hover:text-red-900 hover:bg-red-50"
                               >
                                 <Trash2 className="h-4 w-4" />

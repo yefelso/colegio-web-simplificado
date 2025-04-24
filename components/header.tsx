@@ -22,11 +22,22 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white border-b border-gray-200">
+    <header className="bg-white border-b border-gray-200 relative z-10">
+      {/* Logo que sobresale */}
+      <div className="absolute left-4 sm:left-8 lg:left-12 -bottom-16 z-50">
+        <div className="bg-white rounded-full p-4 shadow-lg">
+          <img 
+            src="/images/hero/logo_img.png"
+            alt="Escudo del Colegio"
+            className="w-24 h-24 object-contain"
+          />
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
+            <div className="flex-shrink-0 flex items-center pl-32">
               <Link href="/" className="text-xl font-bold text-blue-600">
                 Maria de los Angeles
               </Link>
