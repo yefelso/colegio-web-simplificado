@@ -13,7 +13,7 @@ import { useRouter, useParams } from "next/navigation"
 import { ArrowLeft, Save, CheckCircle, XCircle, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 import { Textarea } from "@/components/ui/textarea"
-import QrScanner from "@/components/QrScanner"
+import dynamic from "next/dynamic"
 
 interface Alumno {
   id: string
@@ -44,6 +44,16 @@ interface Grupo {
     nombre: string
   }
 }
+
+// Importar el QrScanner de forma dinámica
+const QrScanner = dynamic(() => import("@/components/QrScanner"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-64 flex items-center justify-center bg-gray-100 rounded-lg">
+      Cargando scanner QR...
+    </div>
+  ),
+})
 
 export default function RegistrarAsistenciaPage() {
   const { user } = useAuth()
@@ -252,7 +262,7 @@ export default function RegistrarAsistenciaPage() {
       const [prefix, role, uid, dni] = decodedText.split(":")
       
       if (prefix !== "COLEGIO") {
-        console.error("QR inválido: prefijo incorrecto")
+        console.error("QR inválido: prefijo incorrecto", { decodedText })
         toast({
           title: "QR Inválido",
           description: "El código QR no es válido para este sistema.",
@@ -262,7 +272,7 @@ export default function RegistrarAsistenciaPage() {
       }
 
       if (role !== "ALUMNO") {
-        console.error("QR inválido: rol incorrecto")
+        console.error("QR inválido: rol incorrecto", { role })
         toast({
           title: "QR Inválido",
           description: "El código QR no corresponde a un alumno.",
@@ -274,14 +284,14 @@ export default function RegistrarAsistenciaPage() {
       // Buscar el alumno en la lista
       const alumno = alumnos.find(a => a.id === uid || a.dni === dni)
       if (alumno) {
-        console.log("Alumno encontrado:", alumno)
+        console.log("Alumno encontrado:", { alumno })
         handleEstadoChange(alumno.id, "presente")
         toast({
           title: "Asistencia Registrada",
           description: `Se registró la asistencia de ${alumno.nombre} ${alumno.apellidos}`,
         })
       } else {
-        console.error("Alumno no encontrado en la lista")
+        console.error("Alumno no encontrado en la lista", { uid, dni })
         toast({
           title: "Alumno no encontrado",
           description: "El alumno no pertenece a este grupo.",
@@ -294,6 +304,7 @@ export default function RegistrarAsistenciaPage() {
         title: "Error",
         description: "Error al procesar el código QR.",
         variant: "destructive",
+        duration: 5000,
       })
     }
   }
@@ -304,6 +315,7 @@ export default function RegistrarAsistenciaPage() {
       title: "Error del Scanner",
       description: "Hubo un error con el scanner QR. Por favor, intenta de nuevo.",
       variant: "destructive",
+      duration: 5000,
     })
   }
 

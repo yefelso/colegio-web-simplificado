@@ -24,7 +24,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FallbackImage } from "@/components/ui/fallback-image"
 import { generateQRCode } from "@/lib/qr-utils"
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, deleteUser } from "firebase/auth"
 import { auth, secondaryAuth } from "@/lib/firebase"
 
 interface Usuario {

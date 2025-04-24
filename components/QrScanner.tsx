@@ -1,85 +1,83 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Html5Qrcode } from "html5-qrcode"
+import QrScanner from "qr-scanner"
+import { Button } from "@/components/ui/button"
 
 interface QrScannerProps {
   onScan: (decodedText: string) => void
   onError?: (error: string) => void
 }
 
-export default function QrScanner({ onScan, onError }: QrScannerProps) {
+export default function QrScannerComponent({ onScan, onError }: QrScannerProps) {
   const [isScanning, setIsScanning] = useState(false)
-  const scannerRef = useRef<Html5Qrcode | null>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const scannerRef = useRef<QrScanner | null>(null)
 
   useEffect(() => {
-    // Inicializar el escáner
-    scannerRef.current = new Html5Qrcode("qr-reader")
-
-    // Limpiar al desmontar
     return () => {
-      if (scannerRef.current && isScanning) {
-        scannerRef.current
-          .stop()
-          .then(() => {
-            console.log("Scanner stopped successfully")
-          })
-          .catch((err) => {
-            console.error("Error stopping scanner:", err)
-          })
+      // Limpieza al desmontar
+      if (scannerRef.current) {
+        scannerRef.current.destroy()
       }
     }
   }, [])
 
-  useEffect(() => {
-    if (!scannerRef.current) return
+  const startScanner = async () => {
+    if (!videoRef.current) return
 
-    if (isScanning) {
-      console.log("Starting QR scanner...")
-      
-      scannerRef.current
-        .start(
-          { facingMode: "environment" },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-          },
-          (decodedText) => {
-            console.log("QR Code detected:", decodedText)
-            onScan(decodedText)
-          },
-          (errorMessage) => {
-            console.error("QR Scan error:", errorMessage)
-            onError?.(errorMessage)
-          }
-        )
-        .catch((err) => {
-          console.error("Error starting scanner:", err)
-          onError?.(err.toString())
-        })
-    } else {
-      if (scannerRef.current) {
-        scannerRef.current
-          .stop()
-          .then(() => {
-            console.log("Scanner stopped successfully")
-          })
-          .catch((err) => {
-            console.error("Error stopping scanner:", err)
-          })
-      }
+    try {
+      console.log("Iniciando scanner...")
+      scannerRef.current = new QrScanner(
+        videoRef.current,
+        (result) => {
+          console.log("QR detectado:", result.data)
+          onScan(result.data)
+        },
+        {
+          preferredCamera: "environment",
+          highlightScanRegion: true,
+          highlightCodeOutline: true,
+          returnDetailedScanResult: true,
+        }
+      )
+
+      await scannerRef.current.start()
+      setIsScanning(true)
+      console.log("Scanner iniciado correctamente")
+    } catch (error) {
+      console.error("Error al iniciar el scanner:", error)
+      onError?.(error instanceof Error ? error.message : "Error al iniciar el scanner")
     }
-  }, [isScanning, onScan, onError])
+  }
+
+  const stopScanner = () => {
+    if (scannerRef.current) {
+      console.log("Deteniendo scanner...")
+      scannerRef.current.stop()
+      setIsScanning(false)
+    }
+  }
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div id="qr-reader" className="w-full"></div>
-      <button
-        onClick={() => setIsScanning(!isScanning)}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      <div className="relative aspect-square rounded-lg overflow-hidden bg-black">
+        <video 
+          ref={videoRef} 
+          className="w-full h-full object-cover"
+        />
+        {isScanning && (
+          <div className="absolute inset-0 border-2 border-dashed border-blue-500 m-8 pointer-events-none"></div>
+        )}
+      </div>
+      
+      <Button
+        onClick={() => isScanning ? stopScanner() : startScanner()}
+        className="w-full mt-4"
+        variant={isScanning ? "destructive" : "default"}
       >
         {isScanning ? "Detener Scanner" : "Iniciar Scanner"}
-      </button>
+      </Button>
     </div>
   )
 } 

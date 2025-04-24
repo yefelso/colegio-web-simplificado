@@ -19,6 +19,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import jsQR from "jsqr"
 import { parseQRCode } from "@/lib/qr-utils"
 
+interface DetectorConfig {
+  threshold: number;  // Definir el tipo para threshold
+  // ... otros campos si los hay
+}
+
+// Definir la interfaz para las opciones de jsQR
+interface JSQROptions {
+  inversionAttempts: "dontInvert" | "onlyInvert" | "attemptBoth";
+}
+
 export default function EscanearQRPage() {
   const { user } = useAuth()
   const { toast } = useToast()
@@ -106,8 +116,7 @@ export default function EscanearQRPage() {
         const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
         const code = jsQR(imageData.data, imageData.width, imageData.height, {
           inversionAttempts: "dontInvert",
-          threshold: 0.1,
-        })
+        } as JSQROptions)
 
         if (code) {
           // Verificar que el QR tenga el formato correcto
