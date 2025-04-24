@@ -13,6 +13,7 @@ import { useRouter, useParams } from "next/navigation"
 import { ArrowLeft, Save, CheckCircle, XCircle, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 import { Textarea } from "@/components/ui/textarea"
+import QrScanner from "@/components/QrScanner"
 
 interface Alumno {
   id: string
@@ -244,6 +245,68 @@ export default function RegistrarAsistenciaPage() {
     cargarDatos()
   }
 
+  const handleQrScan = (decodedText: string) => {
+    try {
+      console.log("QR escaneado:", decodedText)
+      // El formato esperado es COLEGIO:ROLE:UID:DNI
+      const [prefix, role, uid, dni] = decodedText.split(":")
+      
+      if (prefix !== "COLEGIO") {
+        console.error("QR inválido: prefijo incorrecto")
+        toast({
+          title: "QR Inválido",
+          description: "El código QR no es válido para este sistema.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      if (role !== "ALUMNO") {
+        console.error("QR inválido: rol incorrecto")
+        toast({
+          title: "QR Inválido",
+          description: "El código QR no corresponde a un alumno.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      // Buscar el alumno en la lista
+      const alumno = alumnos.find(a => a.id === uid || a.dni === dni)
+      if (alumno) {
+        console.log("Alumno encontrado:", alumno)
+        handleEstadoChange(alumno.id, "presente")
+        toast({
+          title: "Asistencia Registrada",
+          description: `Se registró la asistencia de ${alumno.nombre} ${alumno.apellidos}`,
+        })
+      } else {
+        console.error("Alumno no encontrado en la lista")
+        toast({
+          title: "Alumno no encontrado",
+          description: "El alumno no pertenece a este grupo.",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error procesando QR:", error)
+      toast({
+        title: "Error",
+        description: "Error al procesar el código QR.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleQrError = (error: string) => {
+    console.error("Error en el scanner:", error)
+    toast({
+      title: "Error del Scanner",
+      description: "Hubo un error con el scanner QR. Por favor, intenta de nuevo.",
+      variant: "destructive",
+    })
+  }
+
   if (user?.role !== "profesor") {
     return null
   }
@@ -285,6 +348,15 @@ export default function RegistrarAsistenciaPage() {
         </Card>
       ) : (
         <>
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Escanear QR</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <QrScanner onScan={handleQrScan} onError={handleQrError} />
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Lista de Alumnos</CardTitle>
