@@ -1,33 +1,31 @@
 "use client"
 
-import type React from "react"
-import { createContext, useContext, useState, useEffect } from "react"
-import { signInWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth"
-import { doc, getDoc, setDoc } from "firebase/firestore"
-import { auth, db } from "./firebase"
-
-interface User {
-  uid: string
-  email: string
-  nombre: string
-  apellidos: string
-  role: "admin" | "profesor" | "alumno" | "auxiliar"
-  dni?: string
-  [key: string]: any
-}
+import { createContext, useContext, useEffect, useState } from "react"
+import { auth } from "@/lib/firebase"
+import { onAuthStateChanged, signOut } from "firebase/auth"
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+import type { User } from "firebase/auth"
 
 interface AuthContextType {
-  user: User | null
+  user: UserData | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
-  checkUserRole: (requiredRole: string) => boolean
+}
+
+interface UserData {
+  uid: string
+  email: string | null
+  role: string
+  nombre?: string
+  apellidos?: string
+  [key: string]: any
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -35,16 +33,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (firebaseUser) {
         try {
           const userDoc = await getDoc(doc(db, "users", firebaseUser.uid))
+          
           if (userDoc.exists()) {
-            const userData = userDoc.data() as User
-            setUser({
-              uid: firebaseUser.uid,
-              email: firebaseUser.email || "",
-              ...userData,
-            })
+            // Crear el objeto de usuario combinando datos de Firebase Auth y Firestore
+            const userData = {
+              ...userDoc.data(),
+              // No necesitamos especificar uid y email aquí ya que vienen en userDoc.data()
+            } as UserData
+
+            setUser(userData)
           } else {
             console.error("No se encontró el documento del usuario")
-            await firebaseSignOut(auth)
             setUser(null)
           }
         } catch (error) {
@@ -60,63 +59,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe()
   }, [])
 
-  const signIn = async (email: string, password: string) => {
-    setLoading(true)
+  const handleSignOut = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password)
-      const firebaseUser = userCredential.user
+      await signOut(auth)
+      setUser(null)
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error)
+      throw error
+    }
+  }
 
-      // Obtener datos adicionales del usuario desde Firestore
-      const userDoc = await getDoc(doc(db, "users", firebaseUser.uid))
-
+  const signIn = async (userData: User) => {
+    try {
+      const userDoc = await getDoc(doc(db, "users", userData.uid))
+      
       if (userDoc.exists()) {
-        const userData = userDoc.data() as User
+        const firestoreData = userDoc.data()
+        
+        if (firestoreData.role) {
+          // Crear el objeto de usuario combinando datos
+          const combinedData = {
+            ...firestoreData,
+            // No necesitamos especificar uid y email aquí ya que vienen en firestoreData
+          } as UserData
 
-        // Verificar que el rol sea válido
-        if (
-          userData.role === "admin" ||
-          userData.role === "profesor" ||
-          userData.role === "alumno" ||
-          userData.role === "auxiliar"
-        ) {
-          setUser({
-            uid: firebaseUser.uid,
-            email: firebaseUser.email || "",
-            ...userData,
-          })
-        } else {
-          console.error("Rol de usuario no válido:", userData.role)
-          await firebaseSignOut(auth)
-          throw new Error("Rol de usuario no válido")
+          setUser(combinedData)
+          return combinedData
         }
-      } else {
-        console.error("No se encontró el documento del usuario")
-        await firebaseSignOut(auth)
-        throw new Error("No se encontró el documento del usuario")
+        
+        console.error("Rol de usuario no válido:", firestoreData.role)
+        throw new Error("Rol de usuario no válido")
       }
+      
+      console.error("No se encontró el documento del usuario")
+      throw new Error("No se encontró el documento del usuario")
     } catch (error) {
       console.error("Error al iniciar sesión:", error)
       throw error
-    } finally {
-      setLoading(false)
     }
   }
 
-  const signOut = async () => {
-    try {
-      await firebaseSignOut(auth)
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error)
-    }
+  const value = {
+    user,
+    loading,
+    signOut: handleSignOut,
   }
 
-  // Agregar una función para verificar el rol del usuario
-  const checkUserRole = (requiredRole: string) => {
-    if (!user) return false
-    return user.role === requiredRole
-  }
-
-  return <AuthContext.Provider value={{ user, loading, signIn, signOut, checkUserRole }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {
