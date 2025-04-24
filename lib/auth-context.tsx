@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 import { auth } from "@/lib/firebase"
-import { onAuthStateChanged, signOut } from "firebase/auth"
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import type { User } from "firebase/auth"
@@ -10,6 +10,7 @@ import type { User } from "firebase/auth"
 interface AuthContextType {
   user: UserData | null
   loading: boolean
+  signIn: (email: string, password: string) => Promise<UserData>
   signOut: () => Promise<void>
 }
 
@@ -35,10 +36,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const userDoc = await getDoc(doc(db, "users", firebaseUser.uid))
           
           if (userDoc.exists()) {
-            // Crear el objeto de usuario combinando datos de Firebase Auth y Firestore
             const userData = {
               ...userDoc.data(),
-              // No necesitamos especificar uid y email aquí ya que vienen en userDoc.data()
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
             } as UserData
 
             setUser(userData)
@@ -59,6 +60,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe()
   }, [])
 
+  const handleSignIn = async (email: string, password: string) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid))
+      
+      if (userDoc.exists()) {
+        const firestoreData = userDoc.data()
+        
+        if (firestoreData.role) {
+          const userData = {
+            ...firestoreData,
+            uid: userCredential.user.uid,
+            email: userCredential.user.email,
+          } as UserData
+
+          setUser(userData)
+          return userData
+        }
+        
+        throw new Error("Rol de usuario no válido")
+      }
+      
+      throw new Error("No se encontró el documento del usuario")
+    } catch (error: any) {
+      console.error("Error al iniciar sesión:", error)
+      throw error
+    }
+  }
+
   const handleSignOut = async () => {
     try {
       await signOut(auth)
@@ -69,39 +99,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const signIn = async (userData: User) => {
-    try {
-      const userDoc = await getDoc(doc(db, "users", userData.uid))
-      
-      if (userDoc.exists()) {
-        const firestoreData = userDoc.data()
-        
-        if (firestoreData.role) {
-          // Crear el objeto de usuario combinando datos
-          const combinedData = {
-            ...firestoreData,
-            // No necesitamos especificar uid y email aquí ya que vienen en firestoreData
-          } as UserData
-
-          setUser(combinedData)
-          return combinedData
-        }
-        
-        console.error("Rol de usuario no válido:", firestoreData.role)
-        throw new Error("Rol de usuario no válido")
-      }
-      
-      console.error("No se encontró el documento del usuario")
-      throw new Error("No se encontró el documento del usuario")
-    } catch (error) {
-      console.error("Error al iniciar sesión:", error)
-      throw error
-    }
-  }
-
   const value = {
     user,
     loading,
+    signIn: handleSignIn,
     signOut: handleSignOut,
   }
 
