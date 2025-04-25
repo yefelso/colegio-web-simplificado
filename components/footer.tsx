@@ -100,15 +100,15 @@ export default function Footer() {
                 </a>
               </p>
               <p>
-                <a href="mailto:info@colegiosanmartin.edu" className="hover:text-gray-700">
-                  info@colegiosanmartin.edu
+                <a href="mailto:info@colegiomarialosangeles.edu" className="hover:text-gray-700">
+                  info@colegiomarialosangeles.edu
                 </a>
               </p>
             </address>
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-200 text-center text-gray-500">
-          <p>&copy; {new Date().getFullYear()} Colegio San Martín. Todos los derechos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} Maria de los Angeles. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>

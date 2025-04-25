@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import { GraduationCap, BookOpen, Users, Calendar, School, Award, Globe } from "lucide-react"
+import { GraduationCap, Award, School } from "lucide-react"
 import { HeroSection } from "@/components/ui/hero-section"
 
 export default function InformacionPage() {
@@ -16,86 +16,67 @@ export default function InformacionPage() {
       />
 
       {/* Visión y Misión Section */}
-      <section className="py-24 bg-gradient-to-br from-blue-50 to-white">
+      <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="grid md:grid-cols-2 gap-8">
             {/* Misión Card */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
-              <div className="relative h-64">
-                <img
-                  src="/images/mision.jpg"
-                  alt="Misión"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-600/90 to-blue-600/50 flex items-center justify-center">
-                  <h3 className="text-3xl font-bold text-white">Misión</h3>
+            <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-lg overflow-hidden h-[400px] flex flex-col md:flex-row">
+              <div className="w-full md:w-1/2 h-1/2 md:h-full relative">
+                <div className="absolute inset-0">
+                  <img
+                    src="/images/informacion/mision.png"
+                    alt="Misión"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
               </div>
-              <div className="p-8">
-                <p className="text-gray-600 leading-relaxed">
+              <div className="w-full md:w-1/2 p-6 md:p-8 text-white flex flex-col justify-center">
+                <h3 className="text-2xl font-bold mb-4">Misión</h3>
+                <p className="mb-4">
                   Formar integralmente a nuestros estudiantes con excelencia académica, 
                   valores sólidos y habilidades para la vida, preparándolos para ser 
                   líderes comprometidos con el desarrollo de su comunidad y el país.
                 </p>
-                <ul className="mt-6 space-y-2">
-                  <li className="flex items-center text-gray-600">
-                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Excelencia académica
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-white rounded-full mr-3"></span> Excelencia académica
                   </li>
-                  <li className="flex items-center text-gray-600">
-                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Formación en valores
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-white rounded-full mr-3"></span> Formación en valores
                   </li>
-                  <li className="flex items-center text-gray-600">
-                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Desarrollo integral
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-white rounded-full mr-3"></span> Desarrollo integral
                   </li>
                 </ul>
               </div>
             </div>
 
             {/* Visión Card */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
-              <div className="relative h-64">
-                <img
-                  src="/images/vision.jpg"
-                  alt="Visión"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-600/90 to-blue-600/50 flex items-center justify-center">
-                  <h3 className="text-3xl font-bold text-white">Visión</h3>
+            <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl shadow-lg overflow-hidden h-[400px] flex flex-col md:flex-row">
+              <div className="w-full md:w-1/2 h-1/2 md:h-full relative">
+                <div className="absolute inset-0">
+                  <img
+                    src="/images/informacion/vision.png"
+                    alt="Visión"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
               </div>
-              <div className="p-8">
-                <p className="text-gray-600 leading-relaxed">
-                  Ser reconocidos como una institución educativa líder en la formación 
-                  de estudiantes con excelencia académica, valores éticos y compromiso 
-                  social, preparados para enfrentar los desafíos del mundo globalizado.
+              <div className="w-full md:w-1/2 p-6 md:p-8 text-white flex flex-col justify-center">
+                <h3 className="text-2xl font-bold mb-4">Visión</h3>
+                <p className="mb-4">
+                Ser una institución educativa líder en la región, reconocida por su carácter innovador, desarrollando el logro de las competencias, 
+                análisis critico y creativo en los educandos, para que contribuyan en el desarrollo sostenido de la región y del país.
                 </p>
-                <ul className="mt-6 space-y-2">
-                  <li className="flex items-center text-gray-600">
-                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Liderazgo educativo
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-white rounded-full mr-3"></span> Liderazgo educativo
                   </li>
-                  <li className="flex items-center text-gray-600">
-                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Innovación constante
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-white rounded-full mr-3"></span> Innovación constante
                   </li>
-                  <li className="flex items-center text-gray-600">
-                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Proyección internacional
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-white rounded-full mr-3"></span> Proyección internacional
                   </li>
                 </ul>
               </div>
@@ -134,9 +115,9 @@ export default function InformacionPage() {
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-6">Nuestra Misión</h2>
             <p className="text-lg mb-8">
-              Formar estudiantes con excelencia académica, valores sólidos y habilidades para el éxito en un mundo globalizado.
-              Nuestro compromiso es proporcionar una educación integral que prepare a nuestros estudiantes para los desafíos
-              del futuro.
+            Somos una institución educativa, que garantiza una educación integral de calidad en conocimientos y valores, formando educandos creativos, 
+            innovadores y emprendedores; comprometidos con el cuidado del medio ambiente y capaces de responder a las exigencias de un entorno 
+            competitivo y globalizado.
             </p>
             <Button
               size="lg"
