@@ -13,8 +13,26 @@ export default function Header() {
 
   const navigation = [
     { name: "Inicio", href: "/" },
-    { name: "Información", href: "/informacion" },
-    { name: "Nosotros", href: "/nosotros" },
+    { 
+      name: "Nosotros", 
+      href: "/nosotros",
+    },
+    { 
+      name: "Propuesta Académica", 
+      href: "/propuesta-academica" 
+    },
+    { 
+      name: "Infraestructura", 
+      href: "/infraestructura" 
+    },
+    { 
+      name: "Matrícula", 
+      href: "/matricula" 
+    },
+    { 
+      name: "Información", 
+      href: "/informacion" 
+    },
   ]
 
   const isActive = (path: string) => {

@@ -3,28 +3,104 @@
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { GraduationCap, BookOpen, Users, Calendar, School, Award, Globe } from "lucide-react"
+import { HeroSection } from "@/components/ui/hero-section"
 
 export default function InformacionPage() {
   const router = useRouter()
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-500 to-blue-400 text-white">
-        <div className="container mx-auto px-4 py-32">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-6">Información del Colegio</h1>
-            <p className="text-xl mb-8">Conoce más sobre nuestra institución y nuestros programas educativos</p>
+      <HeroSection 
+        title="Información" 
+        description="Conoce más sobre nuestra institución"
+      />
+
+      {/* Visión y Misión Section */}
+      <section className="py-24 bg-gradient-to-br from-blue-50 to-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Misión Card */}
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
+              <div className="relative h-64">
+                <img
+                  src="/images/mision.jpg"
+                  alt="Misión"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-600/90 to-blue-600/50 flex items-center justify-center">
+                  <h3 className="text-3xl font-bold text-white">Misión</h3>
+                </div>
+              </div>
+              <div className="p-8">
+                <p className="text-gray-600 leading-relaxed">
+                  Formar integralmente a nuestros estudiantes con excelencia académica, 
+                  valores sólidos y habilidades para la vida, preparándolos para ser 
+                  líderes comprometidos con el desarrollo de su comunidad y el país.
+                </p>
+                <ul className="mt-6 space-y-2">
+                  <li className="flex items-center text-gray-600">
+                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Excelencia académica
+                  </li>
+                  <li className="flex items-center text-gray-600">
+                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Formación en valores
+                  </li>
+                  <li className="flex items-center text-gray-600">
+                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Desarrollo integral
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Visión Card */}
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
+              <div className="relative h-64">
+                <img
+                  src="/images/vision.jpg"
+                  alt="Visión"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-600/90 to-blue-600/50 flex items-center justify-center">
+                  <h3 className="text-3xl font-bold text-white">Visión</h3>
+                </div>
+              </div>
+              <div className="p-8">
+                <p className="text-gray-600 leading-relaxed">
+                  Ser reconocidos como una institución educativa líder en la formación 
+                  de estudiantes con excelencia académica, valores éticos y compromiso 
+                  social, preparados para enfrentar los desafíos del mundo globalizado.
+                </p>
+                <ul className="mt-6 space-y-2">
+                  <li className="flex items-center text-gray-600">
+                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Liderazgo educativo
+                  </li>
+                  <li className="flex items-center text-gray-600">
+                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Innovación constante
+                  </li>
+                  <li className="flex items-center text-gray-600">
+                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Proyección internacional
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0">
-        <svg
-            className="w-full h-16 fill-white"
-            viewBox="0 0 1440 100"
-            preserveAspectRatio="none"
-          >
-            <path d="M0,0 L1440,0 L1440,100 L0,100 L0,0 L1440,100 L1440,0 Z" />
-          </svg>
         </div>
       </section>
 
