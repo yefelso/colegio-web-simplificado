@@ -64,10 +64,12 @@ export default function MatriculaPage() {
 
       {/* Sección de Niveles Educativos con fondo inclinado */}
       <section className="relative py-24 overflow-hidden">
-        {/* Fondo inclinado */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100">
-          <div className="absolute inset-0 transform -skew-y-6 bg-gradient-to-r from-blue-600/90 to-purple-600/90 origin-top-left"></div>
-          <div className="absolute inset-0 bg-[url('/images/pattern.png')] mix-blend-overlay opacity-20"></div>
+        {/* Fondo inclinado ajustado al tamaño del hero */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100">
+            <div className="absolute inset-0 transform -skew-y-3 bg-gradient-to-r from-blue-600/90 to-purple-600/90 origin-top-left"></div>
+            <div className="absolute inset-0 bg-[url('/images/pattern.png')] mix-blend-overlay opacity-20"></div>
+          </div>
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
@@ -121,12 +123,20 @@ export default function MatriculaPage() {
         </div>
       </section>
 
-      {/* Sección de Talleres de Verano */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-4">
+      {/* Sección de Talleres de Verano con nuevo fondo inclinado */}
+      <section className="relative py-24 overflow-hidden">
+        {/* Fondo inclinado */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100">
+            <div className="absolute inset-0 transform skew-y-3 bg-gradient-to-r from-orange-600/90 to-rose-600/90 origin-top-right"></div>
+            <div className="absolute inset-0 bg-[url('/images/pattern.png')] mix-blend-overlay opacity-20"></div>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Talleres de Verano 2024</h2>
-            <p className="text-xl text-gray-600">Enero - Febrero | Vacaciones Divertidas y Educativas</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Talleres de Verano 2024</h2>
+            <p className="text-xl text-white/90">Enero - Febrero | Vacaciones Divertidas y Educativas</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -153,25 +163,32 @@ export default function MatriculaPage() {
                 color: "from-teal-500 to-emerald-500"
               }
             ].map((taller) => (
-              <div key={taller.nombre} className="bg-gray-50 rounded-xl shadow-lg p-8 transform hover:-translate-y-2 transition-all duration-300">
-                <div className="text-4xl mb-4">{taller.icono}</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{taller.nombre}</h3>
-                <div className={`text-lg font-semibold bg-gradient-to-r ${taller.color} bg-clip-text text-transparent mb-6`}>
-                  {taller.precio}
+              <div key={taller.nombre} className="relative group">
+                {/* Efecto de brillo */}
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-white/50 to-white/30 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                
+                <div className="relative bg-white rounded-xl shadow-xl p-8 transform hover:-translate-y-2 transition-all duration-300">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br opacity-10 rounded-bl-full"></div>
+                  
+                  <div className="text-4xl mb-4">{taller.icono}</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{taller.nombre}</h3>
+                  <div className={`text-lg font-semibold bg-gradient-to-r ${taller.color} bg-clip-text text-transparent mb-6`}>
+                    {taller.precio}
+                  </div>
+                  <ul className="space-y-3 mb-8">
+                    {taller.actividades.map((actividad) => (
+                      <li key={actividad} className="flex items-center text-gray-700">
+                        <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        {actividad}
+                      </li>
+                    ))}
+                  </ul>
+                  <button className={`w-full py-3 px-4 bg-gradient-to-r ${taller.color} text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300`}>
+                    Reservar Cupo
+                  </button>
                 </div>
-                <ul className="space-y-3 mb-8">
-                  {taller.actividades.map((actividad) => (
-                    <li key={actividad} className="flex items-center text-gray-700">
-                      <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      {actividad}
-                    </li>
-                  ))}
-                </ul>
-                <button className={`w-full py-3 px-4 bg-gradient-to-r ${taller.color} text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300`}>
-                  Reservar Cupo
-                </button>
               </div>
             ))}
           </div>
